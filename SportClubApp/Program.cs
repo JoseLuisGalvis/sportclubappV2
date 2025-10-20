@@ -1,24 +1,31 @@
-using System;
+﻿using System;
 using System.Windows.Forms;
-using DotNetEnv;
+using dotenv.net;
+using System.IO;
 
 namespace SportClubApp
 {
     internal static class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
         [STAThread]
         static void Main()
         {
-            // Cargar las variables de entorno desde el archivo .env
-            Env.Load();
+            // Cargar .env desde la carpeta raíz del proyecto
+            string envPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
 
-            // Inicializa la configuraci�n de la app (fuentes, DPI, etc.)
+            if (File.Exists(envPath))
+            {
+                DotEnv.Load(options: new DotEnvOptions(envFilePaths: new[] { envPath }));
+
+                string key = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY") ?? "NO ENCONTRADA";
+                MessageBox.Show("STRIPE_KEY: " + key);
+            }
+            else
+            {
+                MessageBox.Show("✗ .env NO encontrado en: " + envPath);
+            }
+
             ApplicationConfiguration.Initialize();
-
-            // Ejecuta el formulario principal
             Application.Run(new Form1());
         }
     }

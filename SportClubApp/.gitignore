@@ -1,25 +1,50 @@
+# =====================================
 # Archivos de Visual Studio
+# =====================================
 .vs/
 *.user
 *.suo
 *.userosscache
 *.sln.docstates
+*.VC.db
 
-# Binarios y temporales
+# =====================================
+# Binarios y compilaciones
+# =====================================
 bin/
 obj/
 Debug/
 Release/
-*.exe
-*.dll
-*.pdb
-*.cache
-*.log
+[Bb]uild/
+x64/
+x86/
 
+# =====================================
+# Archivos generados por NuGet o paquetes
+# =====================================
+*.nupkg
+*.snupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+
+# =====================================
 # Archivos del sistema
+# =====================================
 Thumbs.db
 Desktop.ini
 
-# Configuraciones locales
+# =====================================
+# Configuraciones locales de IDE / editor
+# =====================================
 .vscode/
 .env
+
+# =====================================
+# Archivos de prueba / temporales
+# =====================================
+*.log
+*.cache
+*.tmp
+*.bak
+*.old

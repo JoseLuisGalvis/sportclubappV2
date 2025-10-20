@@ -1,0 +1,148 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\Jose\\Desktop\\SportClubG5\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{381030EE-07A4-467A-A73B-BABEE7E4A3C0}|SportClubApp\\SportClubApp.csproj|c:\\users\\jose\\desktop\\sportclubg5\\sportclubapp\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{381030EE-07A4-467A-A73B-BABEE7E4A3C0}|SportClubApp\\SportClubApp.csproj|solutionrelative:sportclubapp\\.gitignore||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{381030EE-07A4-467A-A73B-BABEE7E4A3C0}|SportClubApp\\SportClubApp.csproj|c:\\users\\jose\\desktop\\sportclubg5\\sportclubapp\\formregistrosocio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{381030EE-07A4-467A-A73B-BABEE7E4A3C0}|SportClubApp\\SportClubApp.csproj|solutionrelative:sportclubapp\\formregistrosocio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{381030EE-07A4-467A-A73B-BABEE7E4A3C0}|SportClubApp\\SportClubApp.csproj|C:\\Users\\Jose\\Desktop\\SportClubG5\\sportclubapp\\formregistrosocio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{381030EE-07A4-467A-A73B-BABEE7E4A3C0}|SportClubApp\\SportClubApp.csproj|solutionrelative:sportclubapp\\formregistrosocio.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{381030EE-07A4-467A-A73B-BABEE7E4A3C0}|SportClubApp\\SportClubApp.csproj|c:\\users\\jose\\desktop\\sportclubg5\\sportclubapp\\stripepaymenthandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{381030EE-07A4-467A-A73B-BABEE7E4A3C0}|SportClubApp\\SportClubApp.csproj|solutionrelative:sportclubapp\\stripepaymenthandler.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{381030EE-07A4-467A-A73B-BABEE7E4A3C0}|SportClubApp\\SportClubApp.csproj|c:\\users\\jose\\desktop\\sportclubg5\\sportclubapp\\formdashboardadmin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{381030EE-07A4-467A-A73B-BABEE7E4A3C0}|SportClubApp\\SportClubApp.csproj|solutionrelative:sportclubapp\\formdashboardadmin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{381030EE-07A4-467A-A73B-BABEE7E4A3C0}|SportClubApp\\SportClubApp.csproj|c:\\users\\jose\\desktop\\sportclubg5\\sportclubapp\\formdashboardadmin.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{381030EE-07A4-467A-A73B-BABEE7E4A3C0}|SportClubApp\\SportClubApp.csproj|solutionrelative:sportclubapp\\formdashboardadmin.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{381030EE-07A4-467A-A73B-BABEE7E4A3C0}|SportClubApp\\SportClubApp.csproj|C:\\Users\\Jose\\Desktop\\SportClubG5\\sportclubapp\\formdashboardadmin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{381030EE-07A4-467A-A73B-BABEE7E4A3C0}|SportClubApp\\SportClubApp.csproj|solutionrelative:sportclubapp\\formdashboardadmin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{381030EE-07A4-467A-A73B-BABEE7E4A3C0}|SportClubApp\\SportClubApp.csproj|C:\\Users\\Jose\\Desktop\\SportClubG5\\sportclubapp\\formregistroadmin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{381030EE-07A4-467A-A73B-BABEE7E4A3C0}|SportClubApp\\SportClubApp.csproj|solutionrelative:sportclubapp\\formregistroadmin.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": ".gitignore",
+              "DocumentMoniker": "C:\\Users\\Jose\\Desktop\\SportClubG5\\SportClubApp\\.gitignore",
+              "RelativeDocumentMoniker": "SportClubApp\\.gitignore",
+              "ToolTip": "C:\\Users\\Jose\\Desktop\\SportClubG5\\SportClubApp\\.gitignore",
+              "RelativeToolTip": "SportClubApp\\.gitignore",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAEAAAAAAAAAA==",
+              "Icon": "00000000-0000-0000-0000-000000000000.000000|iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAF8SURBVDhPjVNLTgJBEG1lwpoFB3GNK9fieA48hD8iwT/ihwgSDAIHgAGXXsEV18CNzL/LquqZdsYM6kteXqcy3fWqpmpNRBgOhyABBEgpAFVKPIMUcYzUyOU\u002BXM/b2qtU3vkSfRjjZTCAMAw1A2LwzdFoBPP5HNqdzuL27n4juibWI\u002BUshBA1DIkhEx9iEorFotgslQqGYbxxAGFEqt1MxmPWJLbLZdZ\u002Bv89q5PMFPiTR6z2zdaxR0fXA0XTBcVywkb4fwHXjRteecIDNQ7UmExVYAdPcxYaqclN46na5WenMKjtlVnTYwcXlVYaDqImW9beD5N/TeGy32QHXm6hZ03ZgiSQHp2fnWQ4oBmJqWSqwAqZpZjt4aLXAD4J0VqyZsmoubfB8H2r1eoaD6NXZ9HcHO\u002BSA3f4AjifXl8rItOETM8ckB9WTWpYD9RdeZ1PWVWAHWXPQaDb59f/w8LiqHeh1pvGkCaP6qB8yXusoxmuNZ7XmII4O9vGuEF86osuDYRkpYQAAAABJRU5ErkJggg==",
+              "WhenOpened": "2025-10-20T05:40:25.109Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "FormRegistroSocio.cs",
+              "DocumentMoniker": "C:\\Users\\Jose\\Desktop\\SportClubG5\\SportClubApp\\FormRegistroSocio.cs",
+              "RelativeDocumentMoniker": "SportClubApp\\FormRegistroSocio.cs",
+              "ToolTip": "C:\\Users\\Jose\\Desktop\\SportClubG5\\SportClubApp\\FormRegistroSocio.cs",
+              "RelativeToolTip": "SportClubApp\\FormRegistroSocio.cs",
+              "ViewState": "AgIAAGYBAAAAAAAAAAAAAG4BAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-19T22:09:21.62Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "FormRegistroSocio.cs [Design]",
+              "DocumentMoniker": "C:\\Users\\Jose\\Desktop\\SportClubG5\\SportClubApp\\FormRegistroSocio.cs",
+              "RelativeDocumentMoniker": "SportClubApp\\FormRegistroSocio.cs",
+              "ToolTip": "C:\\Users\\Jose\\Desktop\\SportClubG5\\SportClubApp\\FormRegistroSocio.cs [Design]",
+              "RelativeToolTip": "SportClubApp\\FormRegistroSocio.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-19T22:09:18.098Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "StripePaymentHandler.cs",
+              "DocumentMoniker": "C:\\Users\\Jose\\Desktop\\SportClubG5\\SportClubApp\\StripePaymentHandler.cs",
+              "RelativeDocumentMoniker": "SportClubApp\\StripePaymentHandler.cs",
+              "ToolTip": "C:\\Users\\Jose\\Desktop\\SportClubG5\\SportClubApp\\StripePaymentHandler.cs",
+              "RelativeToolTip": "SportClubApp\\StripePaymentHandler.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-19T22:06:36.247Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "FormDashboardAdmin.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\Jose\\Desktop\\SportClubG5\\SportClubApp\\FormDashboardAdmin.Designer.cs",
+              "RelativeDocumentMoniker": "SportClubApp\\FormDashboardAdmin.Designer.cs",
+              "ToolTip": "C:\\Users\\Jose\\Desktop\\SportClubG5\\SportClubApp\\FormDashboardAdmin.Designer.cs",
+              "RelativeToolTip": "SportClubApp\\FormDashboardAdmin.Designer.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-19T21:46:58.109Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "FormDashboardAdmin.cs",
+              "DocumentMoniker": "C:\\Users\\Jose\\Desktop\\SportClubG5\\SportClubApp\\FormDashboardAdmin.cs",
+              "RelativeDocumentMoniker": "SportClubApp\\FormDashboardAdmin.cs",
+              "ToolTip": "C:\\Users\\Jose\\Desktop\\SportClubG5\\SportClubApp\\FormDashboardAdmin.cs",
+              "RelativeToolTip": "SportClubApp\\FormDashboardAdmin.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-19T21:46:42.362Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "FormDashboardAdmin.cs [Design]",
+              "DocumentMoniker": "C:\\Users\\Jose\\Desktop\\SportClubG5\\SportClubApp\\FormDashboardAdmin.cs",
+              "RelativeDocumentMoniker": "SportClubApp\\FormDashboardAdmin.cs",
+              "ToolTip": "C:\\Users\\Jose\\Desktop\\SportClubG5\\SportClubApp\\FormDashboardAdmin.cs [Design]",
+              "RelativeToolTip": "SportClubApp\\FormDashboardAdmin.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-19T21:46:39.217Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "FormRegistroAdmin.cs [Design]",
+              "DocumentMoniker": "C:\\Users\\Jose\\Desktop\\SportClubG5\\SportClubApp\\FormRegistroAdmin.cs",
+              "RelativeDocumentMoniker": "SportClubApp\\FormRegistroAdmin.cs",
+              "ToolTip": "C:\\Users\\Jose\\Desktop\\SportClubG5\\SportClubApp\\FormRegistroAdmin.cs [Design]",
+              "RelativeToolTip": "SportClubApp\\FormRegistroAdmin.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-10-19T21:46:31.667Z"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

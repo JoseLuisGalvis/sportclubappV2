@@ -130,7 +130,6 @@
             lblGestion.Size = new Size(134, 19);
             lblGestion.TabIndex = 0;
             lblGestion.Text = "Gestión Registros ";
-            lblGestion.Click += lblGestion_Click;
             // 
             // lblCarnet
             // 
@@ -141,7 +140,6 @@
             lblCarnet.Size = new Size(222, 19);
             lblCarnet.TabIndex = 3;
             lblCarnet.Text = "Cobro Cuotas y  Entrega Carnet";
-            lblCarnet.Click += lblCarnet_Click;
             // 
             // lblReportes
             // 

@@ -1,5 +1,6 @@
-﻿using System.Diagnostics;
-using System.Drawing;
+﻿using SportClubApp.Data.Database;
+using SportClubApp.Data.Repositories;
+using System.Diagnostics;
 
 namespace SportClubApp
 {
@@ -33,8 +34,15 @@ namespace SportClubApp
             // Suscribirse a cambios de tema
             ThemeManager.ThemeChanged += (s, e) => AplicarTema();
 
-            // Centrar la forma en la pantalla y maximizarla
-            this.StartPosition = FormStartPosition.CenterScreen;
+            // Posicionamiento manual: centrado horizontalmente y un poco más arriba
+            this.StartPosition = FormStartPosition.Manual;
+
+            Rectangle screenBounds = Screen.PrimaryScreen.WorkingArea; // Área de trabajo usable
+            int offsetVertical = -200; // Desplazamiento hacia arriba (negativo = más arriba)
+            int x = (screenBounds.Width - this.Width) / 2 + screenBounds.Left;
+            int y = (screenBounds.Height - this.Height) / 2 + screenBounds.Top + offsetVertical;
+
+            this.Location = new Point(x, y);
 
             // Inicializar zoom para pictureBox1
             InicializarZoomPictureBox();
@@ -157,10 +165,12 @@ namespace SportClubApp
                 {
                     ToolStripMenuItem currentItem = menuItem;
 
-                    currentItem.MouseEnter += (s, e) => {
+                    currentItem.MouseEnter += (s, e) =>
+                    {
                         currentItem.BackColor = Color.FromArgb(10, 30, 120);
                     };
-                    currentItem.MouseLeave += (s, e) => {
+                    currentItem.MouseLeave += (s, e) =>
+                    {
                         currentItem.BackColor = Color.FromArgb(30, 30, 30);
                     };
                 }
@@ -193,12 +203,14 @@ namespace SportClubApp
             {
                 if (item is ToolStripMenuItem menuItem)
                 {
-                    ToolStripMenuItem currentItem = menuItem; 
+                    ToolStripMenuItem currentItem = menuItem;
 
-                    currentItem.MouseEnter += (s, e) => {
+                    currentItem.MouseEnter += (s, e) =>
+                    {
                         currentItem.BackColor = Color.FromArgb(20, 40, 80);
                     };
-                    currentItem.MouseLeave += (s, e) => {
+                    currentItem.MouseLeave += (s, e) =>
+                    {
                         currentItem.BackColor = Color.FromArgb(30, 30, 30);
                     };
                 }
@@ -327,19 +339,28 @@ namespace SportClubApp
         // ============================================
         private void ItemSocio_Click(object sender, EventArgs e)
         {
+            // Crear las dependencias necesarias
+            var dbConnection = new DatabaseConnection(Config.ConnectionString);
+            var personaRepo = new PersonaRepository(dbConnection);
+            var socioRepo = new SocioRepository(dbConnection, personaRepo);
+            var usuarioRepo = new UsuarioRepository(dbConnection);
 
-            // Formulario Registro Socio:
-            FormRegistroSocio formSocio = new FormRegistroSocio();
+            // Crear el formulario pasando las dependencias
+            var formSocio = new FormRegistroSocio(dbConnection, personaRepo, socioRepo, usuarioRepo);
             formSocio.ShowDialog();
         }
 
         private void ItemNoSocio_Click(object sender, EventArgs e)
         {
+            var dbConnection = new DatabaseConnection(Config.ConnectionString);
+            var personaRepo = new PersonaRepository(dbConnection);
+            var usuarioRepo = new UsuarioRepository(dbConnection);
+            var noSocioRepo = new NoSocioRepository(dbConnection);
 
-            // Descomentar cuando crees el formulario:
-            FormRegistroNoSocio formNoSocio = new FormRegistroNoSocio();
-            formNoSocio.ShowDialog();
+            var form = new FormRegistroNoSocio(dbConnection, personaRepo, usuarioRepo, noSocioRepo);
+            form.ShowDialog();
         }
+
 
 
 
@@ -349,9 +370,13 @@ namespace SportClubApp
 
         private void ItemAccesoAdmin_Click(object sender, EventArgs e)
         {
-            // Descomentar cuando crees el formulario:
-            FormAccesoAdmin formAccesoAdmin = new FormAccesoAdmin();
-            formAccesoAdmin.ShowDialog();
+            // Crear la conexión y el repositorio
+            var dbConnection = new DatabaseConnection(Config.ConnectionString);
+            var usuarioRepo = new UsuarioRepository(dbConnection);
+
+            // Pasar la dependencia al formulario
+            var form = new FormAccesoAdmin(usuarioRepo);
+            form.ShowDialog();
         }
 
         // ============================================

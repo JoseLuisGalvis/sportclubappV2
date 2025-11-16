@@ -1,4 +1,4 @@
-# =====================================
+﻿# =====================================
 # Archivos de Visual Studio
 # =====================================
 .vs/
@@ -8,25 +8,47 @@
 *.sln.docstates
 *.VC.db
 
-# =====================================
-# Binarios y compilaciones
-# =====================================
-bin/
-obj/
-Debug/
-Release/
-[Bb]uild/
-x64/
-x86/
+Conclusión:
+Dado que el enunciado está incompleto, la respuesta depende del número de horas.
+Pero si la pregunta original era:
 
-# =====================================
-# Archivos generados por NuGet o paquetes
-# =====================================
-*.nupkg
-*.snupkg
-packages/
-project.lock.json
-project.fragment.lock.json
+"Menos de 120 horas" → 0.68
+"Menos de 100 horas" → 0.5
+"Menos de 50 horas" → 0.125 
+
+Conclusión:
+Dado que el enunciado está incompleto, la respuesta depende del número de horas.
+Pero si la pregunta original era:
+
+"Menos de 120 horas" → 0.68
+"Menos de 100 horas" → 0.5
+"Menos de 50 horas" → 0.125 
+
+Conclusión:
+Dado que el enunciado está incompleto, la respuesta depende del número de horas.
+Pero si la pregunta original era:
+
+"Menos de 120 horas" → 0.68
+"Menos de 100 horas" → 0.5
+"Menos de 50 horas" → 0.125 
+
+Conclusión:
+Dado que el enunciado está incompleto, la respuesta depende del número de horas.
+Pero si la pregunta original era:
+
+"Menos de 120 horas" → 0.68
+"Menos de 100 horas" → 0.5
+"Menos de 50 horas" → 0.125 
+
+Conclusión:
+Dado que el enunciado está incompleto, la respuesta depende del número de horas.
+Pero si la pregunta original era:
+
+"Menos de 120 horas" → 0.68
+"Menos de 100 horas" → 0.5
+"Menos de 50 horas" → 0.125 
+
+
 
 # =====================================
 # Archivos del sistema

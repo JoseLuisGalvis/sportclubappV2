@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using dotenv.net;
 
 namespace SportClubApp
 {
@@ -17,16 +13,41 @@ namespace SportClubApp
         // ============================================
         // STRIPE CONFIGURATION
         // ============================================
-        public static readonly string STRIPE_SECRET_KEY = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
-        public static readonly string STRIPE_PUBLISHABLE_KEY = Environment.GetEnvironmentVariable("STRIPE_PUBLISHABLE_KEY");
+        static Config()
+        {
+            try
+            {
+                DotEnv.AutoConfig();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"⚠️ Error cargando .env: {ex.Message}");
+            }
+        }
 
-        // Monto de membresía en centavos (100.000 pesos = 10.000.000 centavos)
-        public const long MEMBERSHIP_AMOUNT_CENTS = 10000000;
-        public const string CURRENCY = "usd"; // Peso Argentino
 
-        // URLs de retorno (localhost para testing)
-        public const string SUCCESS_URL = "http://localhost:5000/success";
-        public const string CANCEL_URL = "http://localhost:5000/cancel";
+        public static readonly string STRIPE_SECRET_KEY =
+            Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY")
+            ?? throw new Exception("❌ STRIPE_SECRET_KEY no encontrada en .env");
+
+        public static readonly string STRIPE_PUBLISHABLE_KEY =
+            Environment.GetEnvironmentVariable("STRIPE_PUBLISHABLE_KEY")
+            ?? throw new Exception("❌ STRIPE_PUBLISHABLE_KEY no encontrada en .env");
+
+        // ============================================
+        // MONTOS Y URLS
+        // ============================================
+        public const long MEMBERSHIP_AMOUNT_CENTS = 10000000; // $100.000 (Stripe usa centavos)
+        public const string CURRENCY = "USD";
+
+        public const string SUCCESS_URL = "https://localhost:5001/success";
+        public const string CANCEL_URL = "https://localhost:5001/cancel";
+
+        public const long NOSOCIO_AMOUNT_CENTS = 1000000; // $10.000
+        public const string NOSOCIO_PRODUCT_NAME = "Entrada Diaria - No Socio";
+        public const string NOSOCIO_SUCCESS_URL = "https://localhost:5001/success";
+        public const string NOSOCIO_CANCEL_URL = "https://localhost:5001/cancel";
+
     }
 }
 

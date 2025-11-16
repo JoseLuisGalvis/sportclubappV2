@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using SportClubApp.Data.Interfaces;
 
 namespace SportClubApp
 {
@@ -14,14 +6,16 @@ namespace SportClubApp
     {
         private int adminId;
         private string currentUsername;
+        private readonly IUsuarioRepository _usuarioRepository;
 
-        // Constructor que recibe datos del admin a editar
-        public FormEditarAdmin(int id, string username)
+        // ✅ NUEVO CONSTRUCTOR con DI
+        public FormEditarAdmin(IUsuarioRepository usuarioRepository, int id, string username)
         {
-            InitializeComponent();
-
+            _usuarioRepository = usuarioRepository;
             this.adminId = id;
             this.currentUsername = username;
+
+            InitializeComponent();
 
             // Cargar datos existentes
             CargarDatosAdministrador();
@@ -32,21 +26,27 @@ namespace SportClubApp
             ThemeManager.ThemeChanged += (s, e) => AplicarTema();
         }
 
+        // ✅ CONSTRUCTOR TEMPORAL para diseñador
+        public FormEditarAdmin(int id, string username) : this(null, id, username)
+        {
+        }
+
         private void CargarDatosAdministrador()
         {
             txtUserAdmin.Text = currentUsername;
         }
 
         // EVENTO: Botón Guardar
-        private void btnGuardar_Click(object sender, EventArgs e)
+        private async void btnGuardar_Click(object sender, EventArgs e)
         {
-            if (ValidarDatos())
+            if (await ValidarDatos())
             {
-                GuardarCambios();
+                await GuardarCambios();
             }
         }
 
-        private bool ValidarDatos()
+        // ✅ MÉTODO MIGRADO - ASINCRONO
+        private async Task<bool> ValidarDatos()
         {
             // Validar usuario
             if (string.IsNullOrWhiteSpace(txtUserAdmin.Text))
@@ -57,13 +57,24 @@ namespace SportClubApp
                 return false;
             }
 
-            // Validar si el username cambió y ya existe
-            if (txtUserAdmin.Text != currentUsername && DBHelper.UsernameExists(txtUserAdmin.Text))
+            if (_usuarioRepository == null)
             {
-                MessageBox.Show("El nombre de usuario ya existe. Elija otro.", "Error",
-                              MessageBoxButtons.OK, MessageBoxIcon.Error);
-                txtUserAdmin.Focus();
+                MessageBox.Show("Error: Repository no inicializado", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
+            }
+
+            // ✅ NUEVA FORMA - Validar si el username cambió y ya existe
+            if (txtUserAdmin.Text != currentUsername)
+            {
+                bool usernameExiste = await _usuarioRepository.ExisteUsernameAsync(txtUserAdmin.Text, adminId);
+                if (usernameExiste)
+                {
+                    MessageBox.Show("El nombre de usuario ya existe. Elija otro.", "Error",
+                                  MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    txtUserAdmin.Focus();
+                    return false;
+                }
             }
 
             // Validar contraseñas si se están cambiando
@@ -89,11 +100,20 @@ namespace SportClubApp
             return true;
         }
 
-        private void GuardarCambios()
+        // ✅ MÉTODO MIGRADO - ASINCRONO
+        private async Task GuardarCambios()
         {
             try
             {
-                bool success = DBHelper.ActualizarAdministrador(
+                if (_usuarioRepository == null)
+                {
+                    MessageBox.Show("Error: Repository no inicializado", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // ✅ NUEVA FORMA - Actualizar administrador
+                bool success = await _usuarioRepository.ActualizarAdministradorAsync(
                     adminId,
                     txtUserAdmin.Text.Trim(),
                     string.IsNullOrWhiteSpace(txtNuevaPassword.Text) ? null : txtNuevaPassword.Text

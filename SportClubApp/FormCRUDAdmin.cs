@@ -1,22 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using SportClubApp.Data.Interfaces;
+using SportClubApp.Models;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
 
 namespace SportClubApp
 {
     public partial class FormCRUDAdmin : Form
     {
         private DataTable administradoresData;
+        private readonly IUsuarioRepository _usuarioRepository;
 
-        public FormCRUDAdmin()
+        // ✅ NUEVO CONSTRUCTOR con DI
+        public FormCRUDAdmin(IUsuarioRepository usuarioRepository)
         {
+            _usuarioRepository = usuarioRepository;
             InitializeComponent();
 
             // Configuración inicial
@@ -30,26 +26,41 @@ namespace SportClubApp
             // ================================
         }
 
+        // ✅ CONSTRUCTOR TEMPORAL para diseñador
+        public FormCRUDAdmin() : this(null)
+        {
+        }
+
         private void ConfigureDataGridView()
         {
-            // Configurar el DataGridView para que use las columnas que definiste
             dgvAdministradores.AutoGenerateColumns = false;
             dgvAdministradores.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dgvAdministradores.MultiSelect = false;
             dgvAdministradores.ReadOnly = true;
 
-            // Configurar las columnas existentes con las propiedades de datos
             colId.DataPropertyName = "id";
             colUsername.DataPropertyName = "username";
             colFecha.DataPropertyName = "fecha_creacion";
             colEstado.DataPropertyName = "estado";
         }
 
-        private void LoadAdministradores()
+        // ✅ MÉTODO MIGRADO - ASINCRONO
+        private async void LoadAdministradores()
         {
             try
             {
-                administradoresData = DBHelper.GetAdministradores();
+                if (_usuarioRepository == null)
+                {
+                    MessageBox.Show("Error: Repository no inicializado", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+
+                // ✅ NUEVA FORMA - Obtener administradores
+                var administradores = await _usuarioRepository.GetAdministradoresAsync();
+
+                // Convertir a DataTable
+                administradoresData = ConvertToDataTable(administradores);
                 dgvAdministradores.DataSource = administradoresData;
 
                 // Actualizar el label con el total
@@ -62,42 +73,59 @@ namespace SportClubApp
             }
         }
 
-        // EVENTO: Botón Nuevo Administrador
+        // ✅ MÉTODO AUXILIAR para convertir List<Usuario> a DataTable
+        private DataTable ConvertToDataTable(List<Usuario> administradores)
+        {
+            var table = new DataTable();
+            table.Columns.Add("id", typeof(int));
+            table.Columns.Add("username", typeof(string));
+            table.Columns.Add("fecha_creacion", typeof(DateTime));
+            table.Columns.Add("estado", typeof(string));
+
+            foreach (var admin in administradores)
+            {
+                table.Rows.Add(
+                    admin.Id,
+                    admin.Username,
+                    admin.FechaCreacion,
+                    admin.Activo ? "Activo" : "Inactivo"
+                );
+            }
+
+            return table;
+        }
+
         private void btnNuevoAdmin_Click(object sender, EventArgs e)
         {
-            // Abrir formulario de registro de nuevo admin
-            FormRegistroAdmin formRegistro = new FormRegistroAdmin();
+            if (_usuarioRepository == null) return;
+
+            // ✅ PASAR EL REPOSITORY
+            FormRegistroAdmin formRegistro = new FormRegistroAdmin(_usuarioRepository);
             if (formRegistro.ShowDialog() == DialogResult.OK)
             {
-                LoadAdministradores(); // Recargar lista después de agregar
+                LoadAdministradores();
             }
         }
 
-        // EVENTO: Botón Editar Administrador
         private void btnEditarAdmin_Click(object sender, EventArgs e)
         {
-            if (dgvAdministradores.SelectedRows.Count == 0)
-            {
-                MessageBox.Show("Por favor, seleccione un administrador para editar.", "Advertencia",
-                              MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
+            if (dgvAdministradores.SelectedRows.Count == 0) return;
+            if (_usuarioRepository == null) return;
 
-            // Obtener datos del administrador seleccionado
             DataGridViewRow selectedRow = dgvAdministradores.SelectedRows[0];
             int selectedId = Convert.ToInt32(selectedRow.Cells["colId"].Value);
             string username = selectedRow.Cells["colUsername"].Value.ToString();
 
-            // Abrir formulario de edición
-            FormEditarAdmin formEditar = new FormEditarAdmin(selectedId, username);
+            // ✅ PASAR EL REPOSITORY
+            FormEditarAdmin formEditar = new FormEditarAdmin(_usuarioRepository, selectedId, username);
             if (formEditar.ShowDialog() == DialogResult.OK)
             {
-                LoadAdministradores(); // Recargar lista después de editar
+                LoadAdministradores();
             }
         }
 
-        // EVENTO: Botón Eliminar Administrador
-        private void btnEliminarAdmin_Click(object sender, EventArgs e)
+        // ✅ MÉTODO COMPLETAMENTE MIGRADO - ASINCRONO
+        private async void btnEliminarAdmin_Click(object sender, EventArgs e)
         {
             if (dgvAdministradores.SelectedRows.Count == 0)
             {
@@ -122,16 +150,26 @@ namespace SportClubApp
             {
                 try
                 {
-                    // Verificar que no sea el último administrador
-                    if (administradoresData.Rows.Count <= 1)
+                    if (_usuarioRepository == null)
+                    {
+                        MessageBox.Show("Error: Repository no inicializado", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    // ✅ NUEVA FORMA - Verificar que no sea el último administrador
+                    var administradores = await _usuarioRepository.GetAdministradoresAsync();
+                    if (administradores.Count <= 1)
                     {
                         MessageBox.Show("No se puede eliminar el único administrador del sistema.", "Error",
                                       MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
 
-                    // Eliminar administrador
-                    if (DBHelper.EliminarAdministrador(selectedId))
+                    // ✅ NUEVA FORMA - Eliminar administrador
+                    bool eliminado = await _usuarioRepository.EliminarAdministradorAsync(selectedId);
+
+                    if (eliminado)
                     {
                         MessageBox.Show("Administrador eliminado exitosamente.", "Éxito",
                                       MessageBoxButtons.OK, MessageBoxIcon.Information);

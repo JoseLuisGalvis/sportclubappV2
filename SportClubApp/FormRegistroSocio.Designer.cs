@@ -37,8 +37,8 @@
             lblFechaAlta = new Label();
             chkAptoFisico = new CheckBox();
             chkHabilitado = new CheckBox();
-            button1 = new Button();
-            button2 = new Button();
+            btnGuardar = new Button();
+            btnCancelar = new Button();
             txtNombre = new TextBox();
             txtApellido = new TextBox();
             txtDNI = new TextBox();
@@ -47,17 +47,17 @@
             dtpFechaAlta = new DateTimePicker();
             lblUsuario = new Label();
             txtUsuario = new TextBox();
-            lblPasword = new Label();
-            txtPassword = new TextBox();
-            label2 = new Label();
-            txtConfirmarPassword = new TextBox();
+            pbFotoPreview = new PictureBox();
+            btnSeleccionarFoto = new Button();
+            lblFoto = new Label();
+            ((System.ComponentModel.ISupportInitialize)pbFotoPreview).BeginInit();
             SuspendLayout();
             // 
             // label1
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Candara", 15.75F, FontStyle.Bold | FontStyle.Italic, GraphicsUnit.Point, 0);
-            label1.Location = new Point(362, 35);
+            label1.Location = new Point(161, 56);
             label1.Name = "label1";
             label1.Size = new Size(189, 26);
             label1.TabIndex = 0;
@@ -67,7 +67,7 @@
             // 
             lblNombre.AutoSize = true;
             lblNombre.Font = new Font("Candara", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblNombre.Location = new Point(242, 95);
+            lblNombre.Location = new Point(41, 116);
             lblNombre.Name = "lblNombre";
             lblNombre.Size = new Size(53, 15);
             lblNombre.TabIndex = 1;
@@ -77,7 +77,7 @@
             // 
             lblApellido.AutoSize = true;
             lblApellido.Font = new Font("Candara", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblApellido.Location = new Point(242, 128);
+            lblApellido.Location = new Point(41, 149);
             lblApellido.Name = "lblApellido";
             lblApellido.Size = new Size(52, 15);
             lblApellido.TabIndex = 2;
@@ -87,7 +87,7 @@
             // 
             lblDNI.AutoSize = true;
             lblDNI.Font = new Font("Candara", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblDNI.Location = new Point(242, 162);
+            lblDNI.Location = new Point(41, 183);
             lblDNI.Name = "lblDNI";
             lblDNI.Size = new Size(28, 15);
             lblDNI.TabIndex = 3;
@@ -97,7 +97,7 @@
             // 
             lblTelefono.AutoSize = true;
             lblTelefono.Font = new Font("Candara", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTelefono.Location = new Point(241, 196);
+            lblTelefono.Location = new Point(40, 217);
             lblTelefono.Name = "lblTelefono";
             lblTelefono.Size = new Size(56, 15);
             lblTelefono.TabIndex = 4;
@@ -107,7 +107,7 @@
             // 
             lblEMail.AutoSize = true;
             lblEMail.Font = new Font("Candara", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblEMail.Location = new Point(241, 226);
+            lblEMail.Location = new Point(40, 247);
             lblEMail.Name = "lblEMail";
             lblEMail.Size = new Size(37, 15);
             lblEMail.TabIndex = 5;
@@ -117,7 +117,7 @@
             // 
             lblFechaAlta.AutoSize = true;
             lblFechaAlta.Font = new Font("Candara", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblFechaAlta.Location = new Point(242, 351);
+            lblFechaAlta.Location = new Point(41, 304);
             lblFechaAlta.Name = "lblFechaAlta";
             lblFechaAlta.Size = new Size(64, 15);
             lblFechaAlta.TabIndex = 6;
@@ -126,7 +126,7 @@
             // chkAptoFisico
             // 
             chkAptoFisico.AutoSize = true;
-            chkAptoFisico.Location = new Point(241, 382);
+            chkAptoFisico.Location = new Point(40, 335);
             chkAptoFisico.Name = "chkAptoFisico";
             chkAptoFisico.Size = new Size(98, 23);
             chkAptoFisico.TabIndex = 9;
@@ -136,75 +136,75 @@
             // chkHabilitado
             // 
             chkHabilitado.AutoSize = true;
-            chkHabilitado.Location = new Point(544, 382);
+            chkHabilitado.Location = new Point(343, 335);
             chkHabilitado.Name = "chkHabilitado";
             chkHabilitado.Size = new Size(96, 23);
             chkHabilitado.TabIndex = 10;
             chkHabilitado.Text = "Habilitado";
             chkHabilitado.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // btnGuardar
             // 
-            button1.BackColor = Color.FromArgb(0, 192, 0);
-            button1.ForeColor = Color.White;
-            button1.Location = new Point(242, 428);
-            button1.Name = "button1";
-            button1.Size = new Size(93, 32);
-            button1.TabIndex = 11;
-            button1.Text = "Guardar";
-            button1.UseVisualStyleBackColor = false;
-            button1.Click += btnGuardar_Click;
+            btnGuardar.BackColor = Color.FromArgb(0, 192, 0);
+            btnGuardar.ForeColor = Color.White;
+            btnGuardar.Location = new Point(41, 381);
+            btnGuardar.Name = "btnGuardar";
+            btnGuardar.Size = new Size(93, 32);
+            btnGuardar.TabIndex = 11;
+            btnGuardar.Text = "Guardar";
+            btnGuardar.UseVisualStyleBackColor = false;
+            btnGuardar.Click += btnGuardar_Click;
             // 
-            // button2
+            // btnCancelar
             // 
-            button2.BackColor = Color.FromArgb(0, 192, 0);
-            button2.ForeColor = Color.White;
-            button2.Location = new Point(554, 428);
-            button2.Name = "button2";
-            button2.Size = new Size(86, 32);
-            button2.TabIndex = 12;
-            button2.Text = "Cancelar";
-            button2.UseVisualStyleBackColor = false;
-            button2.Click += btnCancelar_Click;
+            btnCancelar.BackColor = Color.FromArgb(0, 192, 0);
+            btnCancelar.ForeColor = Color.White;
+            btnCancelar.Location = new Point(353, 381);
+            btnCancelar.Name = "btnCancelar";
+            btnCancelar.Size = new Size(86, 32);
+            btnCancelar.TabIndex = 12;
+            btnCancelar.Text = "Cancelar";
+            btnCancelar.UseVisualStyleBackColor = false;
+            btnCancelar.Click += btnCancelar_Click;
             // 
             // txtNombre
             // 
-            txtNombre.Location = new Point(376, 86);
+            txtNombre.Location = new Point(175, 107);
             txtNombre.Name = "txtNombre";
             txtNombre.Size = new Size(263, 25);
             txtNombre.TabIndex = 13;
             // 
             // txtApellido
             // 
-            txtApellido.Location = new Point(376, 119);
+            txtApellido.Location = new Point(175, 140);
             txtApellido.Name = "txtApellido";
             txtApellido.Size = new Size(263, 25);
             txtApellido.TabIndex = 14;
             // 
             // txtDNI
             // 
-            txtDNI.Location = new Point(376, 153);
+            txtDNI.Location = new Point(175, 174);
             txtDNI.Name = "txtDNI";
             txtDNI.Size = new Size(263, 25);
             txtDNI.TabIndex = 15;
             // 
             // txtTelefono
             // 
-            txtTelefono.Location = new Point(376, 186);
+            txtTelefono.Location = new Point(175, 207);
             txtTelefono.Name = "txtTelefono";
             txtTelefono.Size = new Size(263, 25);
             txtTelefono.TabIndex = 16;
             // 
             // txtEmail
             // 
-            txtEmail.Location = new Point(378, 221);
+            txtEmail.Location = new Point(177, 242);
             txtEmail.Name = "txtEmail";
             txtEmail.Size = new Size(261, 25);
             txtEmail.TabIndex = 17;
             // 
             // dtpFechaAlta
             // 
-            dtpFechaAlta.Location = new Point(378, 351);
+            dtpFechaAlta.Location = new Point(177, 304);
             dtpFechaAlta.Name = "dtpFechaAlta";
             dtpFechaAlta.Size = new Size(261, 25);
             dtpFechaAlta.TabIndex = 18;
@@ -213,7 +213,7 @@
             // 
             lblUsuario.AutoSize = true;
             lblUsuario.Font = new Font("Candara", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblUsuario.Location = new Point(242, 257);
+            lblUsuario.Location = new Point(41, 278);
             lblUsuario.Name = "lblUsuario";
             lblUsuario.Size = new Size(49, 15);
             lblUsuario.TabIndex = 19;
@@ -221,55 +221,52 @@
             // 
             // txtUsuario
             // 
-            txtUsuario.Location = new Point(378, 252);
+            txtUsuario.Location = new Point(177, 273);
             txtUsuario.Name = "txtUsuario";
             txtUsuario.Size = new Size(261, 25);
             txtUsuario.TabIndex = 20;
             // 
-            // lblPasword
+            // pbFotoPreview
             // 
-            lblPasword.AutoSize = true;
-            lblPasword.Font = new Font("Candara", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblPasword.Location = new Point(242, 289);
-            lblPasword.Name = "lblPasword";
-            lblPasword.Size = new Size(69, 15);
-            lblPasword.TabIndex = 21;
-            lblPasword.Text = "Contraseña";
+            pbFotoPreview.BackColor = SystemColors.ControlLight;
+            pbFotoPreview.BorderStyle = BorderStyle.FixedSingle;
+            pbFotoPreview.Location = new Point(494, 111);
+            pbFotoPreview.Name = "pbFotoPreview";
+            pbFotoPreview.Size = new Size(150, 168);
+            pbFotoPreview.SizeMode = PictureBoxSizeMode.Zoom;
+            pbFotoPreview.TabIndex = 25;
+            pbFotoPreview.TabStop = false;
             // 
-            // txtPassword
+            // btnSeleccionarFoto
             // 
-            txtPassword.Location = new Point(378, 284);
-            txtPassword.Name = "txtPassword";
-            txtPassword.Size = new Size(262, 25);
-            txtPassword.TabIndex = 22;
-            txtPassword.TextChanged += txtPassword_TextChanged;
+            btnSeleccionarFoto.BackColor = Color.LimeGreen;
+            btnSeleccionarFoto.ForeColor = Color.White;
+            btnSeleccionarFoto.Location = new Point(494, 293);
+            btnSeleccionarFoto.Name = "btnSeleccionarFoto";
+            btnSeleccionarFoto.Size = new Size(150, 35);
+            btnSeleccionarFoto.TabIndex = 26;
+            btnSeleccionarFoto.Text = "📷 Seleccionar Foto";
+            btnSeleccionarFoto.UseVisualStyleBackColor = false;
+            btnSeleccionarFoto.Click += btnSeleccionarFoto_Click;
             // 
-            // label2
+            // label3
             // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Candara", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            label2.Location = new Point(241, 322);
-            label2.Name = "label2";
-            label2.Size = new Size(128, 15);
-            label2.TabIndex = 23;
-            label2.Text = "Confirmar Contraseña";
-            // 
-            // txtConfirmarPassword
-            // 
-            txtConfirmarPassword.Location = new Point(378, 315);
-            txtConfirmarPassword.Name = "txtConfirmarPassword";
-            txtConfirmarPassword.Size = new Size(262, 25);
-            txtConfirmarPassword.TabIndex = 24;
+            lblFoto.AutoSize = true;
+            lblFoto.Font = new Font("Candara", 12F, FontStyle.Bold, GraphicsUnit.Point, 0);
+            lblFoto.Location = new Point(516, 79);
+            lblFoto.Name = "label3";
+            lblFoto.Size = new Size(114, 19);
+            lblFoto.TabIndex = 27;
+            lblFoto.Text = "Foto del Carnet";
             // 
             // FormRegistroSocio
             // 
             AutoScaleDimensions = new SizeF(8F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(914, 511);
-            Controls.Add(txtConfirmarPassword);
-            Controls.Add(label2);
-            Controls.Add(txtPassword);
-            Controls.Add(lblPasword);
+            ClientSize = new Size(681, 511);
+            Controls.Add(lblFoto);
+            Controls.Add(btnSeleccionarFoto);
+            Controls.Add(pbFotoPreview);
             Controls.Add(txtUsuario);
             Controls.Add(lblUsuario);
             Controls.Add(dtpFechaAlta);
@@ -278,8 +275,8 @@
             Controls.Add(txtDNI);
             Controls.Add(txtApellido);
             Controls.Add(txtNombre);
-            Controls.Add(button2);
-            Controls.Add(button1);
+            Controls.Add(btnCancelar);
+            Controls.Add(btnGuardar);
             Controls.Add(chkHabilitado);
             Controls.Add(chkAptoFisico);
             Controls.Add(lblFechaAlta);
@@ -290,8 +287,10 @@
             Controls.Add(lblNombre);
             Controls.Add(label1);
             Font = new Font("Segoe UI", 10F, FontStyle.Bold | FontStyle.Italic);
+            Location = new Point(660, 80);
             Name = "FormRegistroSocio";
             Text = "Formulario Registro Socio";
+            ((System.ComponentModel.ISupportInitialize)pbFotoPreview).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -307,8 +306,8 @@
         private Label lblFechaAlta;
         private CheckBox chkAptoFisico;
         private CheckBox chkHabilitado;
-        private Button button1;
-        private Button button2;
+        private Button btnGuardar;
+        private Button btnCancelar;
         private TextBox txtNombre;
         private TextBox txtApellido;
         private TextBox txtDNI;
@@ -317,9 +316,8 @@
         private DateTimePicker dtpFechaAlta;
         private Label lblUsuario;
         private TextBox txtUsuario;
-        private Label lblPasword;
-        private TextBox txtPassword;
-        private Label label2;
-        private TextBox txtConfirmarPassword;
+        private PictureBox pbFotoPreview;
+        private Button btnSeleccionarFoto;
+        private Label lblFoto;
     }
 }

@@ -43,7 +43,7 @@
             // 
             lblTitulo.AutoSize = true;
             lblTitulo.Font = new Font("Candara", 15.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblTitulo.Location = new Point(266, 87);
+            lblTitulo.Location = new Point(200, 80);
             lblTitulo.Name = "lblTitulo";
             lblTitulo.Size = new Size(202, 26);
             lblTitulo.TabIndex = 0;
@@ -54,7 +54,7 @@
             // 
             lblUserAdmin.AutoSize = true;
             lblUserAdmin.Font = new Font("Candara", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblUserAdmin.Location = new Point(233, 145);
+            lblUserAdmin.Location = new Point(167, 138);
             lblUserAdmin.Name = "lblUserAdmin";
             lblUserAdmin.Size = new Size(52, 15);
             lblUserAdmin.TabIndex = 1;
@@ -62,7 +62,7 @@
             // 
             // txtUserAdmin
             // 
-            txtUserAdmin.Location = new Point(296, 142);
+            txtUserAdmin.Location = new Point(230, 135);
             txtUserAdmin.Name = "txtUserAdmin";
             txtUserAdmin.Size = new Size(201, 23);
             txtUserAdmin.TabIndex = 2;
@@ -71,7 +71,7 @@
             // 
             lblNuevaPassword.AutoSize = true;
             lblNuevaPassword.Font = new Font("Candara", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblNuevaPassword.Location = new Point(178, 201);
+            lblNuevaPassword.Location = new Point(112, 194);
             lblNuevaPassword.Name = "lblNuevaPassword";
             lblNuevaPassword.Size = new Size(110, 15);
             lblNuevaPassword.TabIndex = 3;
@@ -81,7 +81,7 @@
             // 
             lblConfPassword.AutoSize = true;
             lblConfPassword.Font = new Font("Candara", 9.75F, FontStyle.Bold, GraphicsUnit.Point, 0);
-            lblConfPassword.Location = new Point(158, 255);
+            lblConfPassword.Location = new Point(92, 248);
             lblConfPassword.Name = "lblConfPassword";
             lblConfPassword.Size = new Size(131, 15);
             lblConfPassword.TabIndex = 4;
@@ -89,21 +89,21 @@
             // 
             // txtNuevaPassword
             // 
-            txtNuevaPassword.Location = new Point(296, 198);
+            txtNuevaPassword.Location = new Point(230, 191);
             txtNuevaPassword.Name = "txtNuevaPassword";
             txtNuevaPassword.Size = new Size(201, 23);
             txtNuevaPassword.TabIndex = 5;
             // 
             // txtConfPassword
             // 
-            txtConfPassword.Location = new Point(296, 252);
+            txtConfPassword.Location = new Point(230, 245);
             txtConfPassword.Name = "txtConfPassword";
             txtConfPassword.Size = new Size(201, 23);
             txtConfPassword.TabIndex = 6;
             // 
             // btnGuardar
             // 
-            btnGuardar.Location = new Point(296, 323);
+            btnGuardar.Location = new Point(230, 316);
             btnGuardar.Name = "btnGuardar";
             btnGuardar.Size = new Size(75, 23);
             btnGuardar.TabIndex = 7;
@@ -112,18 +112,19 @@
             // 
             // btnCancelar
             // 
-            btnCancelar.Location = new Point(421, 323);
+            btnCancelar.Location = new Point(355, 316);
             btnCancelar.Name = "btnCancelar";
             btnCancelar.Size = new Size(75, 23);
             btnCancelar.TabIndex = 8;
             btnCancelar.Text = "Cancelar";
             btnCancelar.UseVisualStyleBackColor = true;
+            btnCancelar.Click += btnCancelar_Click;
             // 
             // FormEditarAdmin
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(684, 461);
+            ClientSize = new Size(560, 461);
             Controls.Add(btnCancelar);
             Controls.Add(btnGuardar);
             Controls.Add(txtConfPassword);

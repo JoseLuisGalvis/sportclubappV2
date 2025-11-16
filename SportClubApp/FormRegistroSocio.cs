@@ -1,394 +1,430 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using SportClubApp.Data.Database;
+using SportClubApp.Data.Interfaces;
+using SportClubApp.Models;
 using Stripe.Checkout;
+
+using System.Runtime.InteropServices;
 
 namespace SportClubApp
 {
     public partial class FormRegistroSocio : Form
     {
-        private int personaIdRegistrada = 0;
-        private System.Diagnostics.Process procesoNavegador; // ← VARIABLE NUEVA PARA CERRAR NAVEGADOR
+        private readonly IDatabaseConnection _dbConnection;
+        private readonly IPersonaRepository _personaRepository;
+        private readonly ISocioRepository _socioRepository;
+        private readonly IUsuarioRepository _usuarioRepository;
 
-        public FormRegistroSocio()
+        private int personaIdRegistrada = 0;
+        private System.Diagnostics.Process procesoNavegador;
+
+        private byte[] fotoCarnet = null;
+        private bool guardandoDatos = false;
+
+        // ================================================================
+        // ✅ WIN32 API (los mantenemos por si acaso, pero no los usamos)
+        // ================================================================
+        [DllImport("user32.dll")]
+        private static extern bool EnumWindows(EnumWindowsProc enumProc, IntPtr lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern int GetWindowText(IntPtr hWnd, System.Text.StringBuilder lpString, int nMaxCount);
+
+        [DllImport("user32.dll")]
+        private static extern int GetWindowTextLength(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        private static extern bool IsWindowVisible(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
+
+        private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
+
+        private const uint WM_CLOSE = 0x0010;
+
+        public FormRegistroSocio(
+            IDatabaseConnection dbConnection,
+            IPersonaRepository personaRepository,
+            ISocioRepository socioRepository,
+            IUsuarioRepository usuarioRepository)
         {
             InitializeComponent();
 
-            // Posicionamiento manual: centrado, pero un poco más abajo
+            _dbConnection = dbConnection;
+            _personaRepository = personaRepository;
+            _socioRepository = socioRepository;
+            _usuarioRepository = usuarioRepository;
+
             this.StartPosition = FormStartPosition.Manual;
             Rectangle screenBounds = Screen.PrimaryScreen.WorkingArea;
             int offsetVertical = 150;
 
             int x = (screenBounds.Width - this.Width) / 2 + screenBounds.Left;
             int y = (screenBounds.Height - this.Height) / 2 + screenBounds.Top + offsetVertical;
-
             this.Location = new Point(x, y);
 
-            // ===== Dark Mode =====
             ThemeManager.ApplyTheme(this);
             AplicarTema();
             ThemeManager.ThemeChanged += (s, e) => AplicarTema();
-            // ================================
 
-            if (!DBHelper.TestConnection())
+            if (!_dbConnection.TestConnection())
             {
                 MessageBox.Show(
-                    "No se pudo conectar a la base de datos.\n\n" +
-                    "Verifica que MySQL esté ejecutándose.",
+                    "No se pudo conectar a la base de datos.\n\nVerifica que MySQL esté ejecutándose.",
                     "Error de Conexión",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error
                 );
             }
-
-            txtPassword.PasswordChar = '*';
-            txtConfirmarPassword.PasswordChar = '*';
         }
 
-        // ===== Método para Aplicar Dark Mode =====
         private void AplicarTema()
         {
-            if (ThemeManager.IsDarkMode)
-            {
-                this.BackColor = ThemeManager.DarkTheme.Background;
-                this.ForeColor = ThemeManager.DarkTheme.Text;
-            }
-            else
-            {
-                this.BackColor = ThemeManager.LightTheme.Background;
-                this.ForeColor = ThemeManager.LightTheme.Text;
-            }
+            this.BackColor = ThemeManager.IsDarkMode ? ThemeManager.DarkTheme.Background : ThemeManager.LightTheme.Background;
+            this.ForeColor = ThemeManager.IsDarkMode ? ThemeManager.DarkTheme.Text : ThemeManager.LightTheme.Text;
         }
-        // ====================================================
 
         private void btnCancelar_Click(object sender, EventArgs e)
         {
             this.Close();
         }
 
-        private void btnGuardar_Click(object sender, EventArgs e)
+        // ================================================================
+        // EVENTO PRINCIPAL: Guardar socio
+        // ================================================================
+        private async void btnGuardar_Click(object sender, EventArgs e)
         {
-            // Validaciones básicas
-            if (string.IsNullOrWhiteSpace(txtNombre.Text))
+            if (guardandoDatos)
             {
-                MessageBox.Show("El nombre es obligatorio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtNombre.Focus();
+                MessageBox.Show("Ya se está procesando el registro. Por favor espere.",
+                    "Procesando", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
-            if (string.IsNullOrWhiteSpace(txtApellido.Text))
+            if (!ValidarCampos())
             {
-                MessageBox.Show("El apellido es obligatorio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtApellido.Focus();
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(txtDNI.Text))
-            {
-                MessageBox.Show("El DNI es obligatorio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtDNI.Focus();
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(txtUsuario.Text))
-            {
-                MessageBox.Show("El nombre de usuario es obligatorio", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtUsuario.Focus();
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(txtPassword.Text))
-            {
-                MessageBox.Show("La contraseña es obligatoria", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtPassword.Focus();
-                return;
-            }
-
-            if (txtPassword.Text != txtConfirmarPassword.Text)
-            {
-                MessageBox.Show("Las contraseñas no coinciden", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtConfirmarPassword.Focus();
-                return;
-            }
-
-            if (txtPassword.Text.Length < 6)
-            {
-                MessageBox.Show("La contraseña debe tener al menos 6 caracteres", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtPassword.Focus();
-                return;
-            }
-
-            // Verificar DNI duplicado
-            if (DBHelper.PersonaExistsByDni(txtDNI.Text.Trim()))
-            {
-                MessageBox.Show("Ya existe una persona con ese DNI", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                txtDNI.Focus();
-                return;
-            }
-
-            // Verificar username duplicado
-            if (DBHelper.UsernameExists(txtUsuario.Text.Trim()))
-            {
-                MessageBox.Show("Ese nombre de usuario ya está en uso", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                txtUsuario.Focus();
                 return;
             }
 
             try
             {
-                // 1. Insertar Persona
-                int personaId = DBHelper.InsertPersona(
+                guardandoDatos = true;
+
+                // VERIFICAR DUPLICADOS
+                if (await _personaRepository.ExistePersonaPorDniAsync(txtDNI.Text.Trim()))
+                {
+                    MessageBox.Show("Ya existe una persona con ese DNI", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    txtDNI.Focus();
+                    return;
+                }
+
+                if (await _usuarioRepository.ExisteUsernameAsync(txtUsuario.Text.Trim()))
+                {
+                    MessageBox.Show("Ese nombre de usuario ya está en uso", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    txtUsuario.Focus();
+                    return;
+                }
+
+                // CREAR OBJETO SOCIO
+                var socio = new Socio(
                     txtNombre.Text.Trim(),
                     txtApellido.Text.Trim(),
                     txtDNI.Text.Trim(),
                     string.IsNullOrWhiteSpace(txtTelefono.Text) ? null : txtTelefono.Text.Trim(),
-                    string.IsNullOrWhiteSpace(txtEmail.Text) ? null : txtEmail.Text.Trim(),
-                    "Socio"
-                );
+                    string.IsNullOrWhiteSpace(txtEmail.Text) ? null : txtEmail.Text.Trim()
+                )
+                {
+                    FechaAlta = dtpFechaAlta.Value.Date,
+                    Habilitado = chkHabilitado.Checked,
+                    AptoFisico = chkAptoFisico.Checked,
+                    FotoCarnet = fotoCarnet
+                };
 
-                // 2. Generar carnet
-                string carnet = $"SOC-{personaId:D5}";
+                // GUARDAR EN BASE DE DATOS
 
-                // 3. Insertar Socio (con estado_pago = 'Pendiente')
-                DBHelper.InsertSocio(
-                    personaId,
-                    dtpFechaAlta.Value.Date,
-                    chkHabilitado.Checked,
-                    chkAptoFisico.Checked,
-                    carnet
-                );
+                // 1️⃣ Crear Persona
+                personaIdRegistrada = await _personaRepository.CrearPersonaAsync(socio);
+                socio.Id = personaIdRegistrada;
 
-                // 4. Crear usuario asociado
-                DBHelper.InsertUsuarioConPersona(
-                    txtUsuario.Text.Trim(),
-                    txtPassword.Text,
-                    "Socio",
-                    personaId
-                );
+                // 2️⃣ Crear Socio (ESTO GENERA EL nroSocio)
+                int nroSocioGenerado = await _socioRepository.CrearSocioAsync(socio);
+                socio.NroSocio = nroSocioGenerado;
 
-                // Guardar el personaId para usarlo después
-                personaIdRegistrada = personaId;
+                // 3️⃣ Generar Carnet DESPUÉS de tener el nroSocio
+                socio.GenerarCarnet();
 
+                // 4️⃣ Actualizar el socio con el carnet generado
+                await _socioRepository.ActualizarSocioAsync(socio);
+
+                // 5️⃣ Crear Usuario
+                var usuario = new Usuario
+                {
+                    Username = txtUsuario.Text.Trim(),
+                    Rol = Rol.Socio,
+                    Activo = true,
+                    PersonaId = personaIdRegistrada
+                };
+
+                // MENSAJE DE ÉXITO
                 MessageBox.Show(
-                    $"Socio registrado exitosamente\n\n" +
+                    $"✅ Socio registrado exitosamente\n\n" +
+                    $"Número de Socio: {socio.NroSocio}\n" +
                     $"Nombre: {txtNombre.Text} {txtApellido.Text}\n" +
                     $"DNI: {txtDNI.Text}\n" +
                     $"Usuario: {txtUsuario.Text}\n" +
-                    $"Carnet: {carnet}\n" +
+                    $"Carnet: {socio.Carnet}\n" +
                     $"Fecha Alta: {dtpFechaAlta.Value.ToShortDateString()}\n\n" +
-                    $"Procederemos al pago de membresía.",
-                    "Éxito",
+                    $"Ahora procederemos al pago de membresía.",
+                    "Registro Exitoso",
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Information
                 );
 
-                // ========== REDIRIGIR A STRIPE ==========
-                RedirigirAStripe(personaId, txtNombre.Text.Trim(), txtApellido.Text.Trim(), txtEmail.Text.Trim());
-                // =============================================
+                // REDIRIGIR A STRIPE
+                await RedirigirAStripeAsync(socio.NroSocio, socio.Nombre, socio.Apellido, socio.Email);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al guardar:\n{ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"❌ Error al guardar:\n\n{ex.Message}",
+                    "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            finally
+            {
+                guardandoDatos = false;
             }
         }
 
-        // ========== MÉTODO: Redirigir a Stripe ==========
-        private void RedirigirAStripe(int personaId, string nombre, string apellido, string email)
+        private bool ValidarCampos()
+        {
+            if (string.IsNullOrWhiteSpace(txtNombre.Text))
+            {
+                MostrarValidacion("El nombre es obligatorio", txtNombre);
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtApellido.Text))
+            {
+                MostrarValidacion("El apellido es obligatorio", txtApellido);
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtDNI.Text))
+            {
+                MostrarValidacion("El DNI es obligatorio", txtDNI);
+                return false;
+            }
+
+            if (txtDNI.Text.Trim().Length < 7 || txtDNI.Text.Trim().Length > 8)
+            {
+                MostrarValidacion("El DNI debe tener entre 7 y 8 dígitos", txtDNI);
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtUsuario.Text))
+            {
+                MostrarValidacion("El nombre de usuario es obligatorio", txtUsuario);
+                return false;
+            }
+
+            if (fotoCarnet == null)
+            {
+                this.Focus();
+
+                var result = MessageBox.Show(
+                    "⚠️ No has seleccionado una foto para el carnet.\n\n¿Deseas continuar sin foto?",
+                    "Foto no seleccionada",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question
+                );
+
+                if (result == DialogResult.No)
+                {
+                    btnSeleccionarFoto.Focus();
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        private void MostrarValidacion(string mensaje, Control control)
+        {
+            MessageBox.Show(mensaje, "⚠️ Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            control.Focus();
+        }
+
+        // ================================================================
+        // REDIRIGIR A STRIPE PARA EL PAGO
+        // ================================================================
+        private async Task RedirigirAStripeAsync(int nroSocio, string nombre, string apellido, string email)
         {
             try
             {
-                // Crear sesión de pago en Stripe
                 Session session = StripePaymentHandler.CreatePaymentSession(
-                    personaId,
+                    nroSocio,
                     $"{nombre} {apellido}",
                     email
                 );
 
-                // Guardar el sessionId en la BD (estado_pago = 'Pendiente')
-                DBHelper.UpdateSocioStripeSession(personaId, session.Id);
+                var socio = await _socioRepository.ObtenerSocioPorNroAsync(nroSocio);
+                socio.StripeSessionId = session.Id;
+                await _socioRepository.ActualizarSocioAsync(socio);
 
-                // Abrir el navegador con la URL de pago de Stripe
                 string paymentUrl = session.Url;
 
                 try
                 {
-                    // ABRIR Y GUARDAR REFERENCIA DEL PROCESO - FORMA MEJORADA
-                    procesoNavegador = System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-                    {
-                        FileName = paymentUrl,
-                        UseShellExecute = true  // ← Esto es clave
-                    });
+                    procesoNavegador = System.Diagnostics.Process.Start(
+                        new System.Diagnostics.ProcessStartInfo
+                        {
+                            FileName = paymentUrl,
+                            UseShellExecute = true
+                        }
+                    );
                 }
                 catch
                 {
                     MessageBox.Show(
-                        $"No se pudo abrir el navegador.\n\nAbre este link manualmente:\n{paymentUrl}",
+                        $"No se pudo abrir el navegador automáticamente.\n\n" +
+                        $"Abre este link manualmente:\n\n{paymentUrl}",
                         "Abrir Navegador",
                         MessageBoxButtons.OK,
                         MessageBoxIcon.Information
                     );
                 }
 
-                // Mostrar verificación de pago
-                MostrarFormularioEsperaConfirmacion(personaId, session.Id);
+                // VERIFICAR PAGO CON TIMER SIMPLIFICADO
+                VerificarPagoPeriodicamente(nroSocio, session.Id);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error al procesar el pago:\n{ex.Message}", "Error de Pago", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(
+                    $"❌ Error al procesar el pago:\n\n{ex.Message}",
+                    "Error de Pago",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error
+                );
             }
         }
 
-        // ========== MÉTODO: Cerrar ventana del navegador de Stripe ==========
-        private void CerrarVentanaStripe()
+        // ================================================================
+        // ✅ VERIFICAR PAGO PERIÓDICAMENTE - VERSIÓN SIMPLIFICADA
+        // ================================================================
+        private void VerificarPagoPeriodicamente(int nroSocio, string sessionId)
         {
-            try
+            var timer = new System.Windows.Forms.Timer
             {
-                // OPCIÓN 1: Cerrar el proceso específico que abrimos
-                if (procesoNavegador != null && !procesoNavegador.HasExited)
-                {
-                    procesoNavegador.CloseMainWindow();
+                Interval = 3000 // Verificar cada 3 segundos
+            };
 
-                    // Esperar un poco y si no se cierra, forzar
-                    if (!procesoNavegador.WaitForExit(1000))
-                    {
-                        procesoNavegador.Kill();
-                    }
-                    procesoNavegador.Dispose();
-                    procesoNavegador = null;
-                }
+            int intentos = 0;
+            const int maxIntentos = 60; // 3 minutos máximo
 
-                // OPCIÓN 2: Buscar y cerrar ventanas de Stripe por título
-                var procesos = System.Diagnostics.Process.GetProcesses();
-                foreach (var proceso in procesos)
-                {
-                    try
-                    {
-                        if (!string.IsNullOrEmpty(proceso.MainWindowTitle) &&
-                            (proceso.MainWindowTitle.IndexOf("stripe", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                             proceso.MainWindowTitle.IndexOf("checkout", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                             proceso.MainWindowTitle.IndexOf("pago", StringComparison.OrdinalIgnoreCase) >= 0 ||
-                             proceso.MainWindowTitle.IndexOf("payment", StringComparison.OrdinalIgnoreCase) >= 0))
-                        {
-                            proceso.CloseMainWindow();
-
-                            // Esperar y forzar si es necesario
-                            if (!proceso.WaitForExit(500))
-                            {
-                                proceso.Kill();
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        // Ignorar errores en procesos individuales
-                    }
-                }
-
-                // OPCIÓN 3: Cerrar navegadores recientes
-                CerrarNavegadoresRecientes();
-            }
-            catch (Exception ex)
+            timer.Tick += async (s, e) =>
             {
-                System.Diagnostics.Debug.WriteLine($"Error cerrando navegador: {ex.Message}");
-            }
-        }
+                intentos++;
 
-        // ========== MÉTODO AUXILIAR: Cerrar navegadores recientes ==========
-        private void CerrarNavegadoresRecientes()
-        {
-            try
-            {
-                // Buscar procesos de navegador activos
-                string[] navegadores = { "chrome", "msedge", "firefox", "iexplore", "opera" };
-
-                foreach (string nav in navegadores)
-                {
-                    var procesos = System.Diagnostics.Process.GetProcessesByName(nav);
-                    foreach (var proc in procesos)
-                    {
-                        try
-                        {
-                            // Solo cerrar si la ventana es visible (tiene interfaz)
-                            if (proc.MainWindowHandle != IntPtr.Zero)
-                            {
-                                proc.CloseMainWindow();
-                                System.Threading.Thread.Sleep(100);
-                            }
-                        }
-                        catch
-                        {
-                            // Continuar con el siguiente
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                // Fallo silencioso
-            }
-        }
-
-        // ========== MÉTODO: Verificar confirmación de pago ==========
-        private void MostrarFormularioEsperaConfirmacion(int personaId, string sessionId)
-        {
-            // Crear un Timer que verifique cada 2 segundos si el pago se completó
-            System.Windows.Forms.Timer timerVerificacion = new System.Windows.Forms.Timer();
-            timerVerificacion.Interval = 2000; // 2 segundos
-
-            timerVerificacion.Tick += (sender, e) =>
-            {
                 try
                 {
-                    // Verificar si el pago fue exitoso
                     if (StripePaymentHandler.IsPaymentSuccessful(sessionId))
                     {
-                        timerVerificacion.Stop();
+                        timer.Stop();
+                        timer.Dispose();
 
-                        // Obtener el PaymentIntentId
                         string paymentIntentId = StripePaymentHandler.GetPaymentIntentId(sessionId);
+                        await _socioRepository.MarcarPagoCompletadoAsync(nroSocio, paymentIntentId);
 
-                        // Marcar el pago como completado en BD
-                        DBHelper.MarkPaymentAsCompleted(personaId, paymentIntentId);
+                        // ✅ SOLUCIÓN MÍNIMA - Cerrar solo el proceso que abrimos
+                        if (procesoNavegador != null && !procesoNavegador.HasExited)
+                        {
+                            procesoNavegador.CloseMainWindow();
+                            procesoNavegador = null;
+                        }
 
-                        // ← PRIMERO CERRAR EL NAVEGADOR DE STRIPE ←
-                        CerrarVentanaStripe();
+                        // Mostrar mensaje de éxito
+                        if (this.IsHandleCreated)
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                MessageBox.Show(
+                                    "✅ ¡PAGO COMPLETADO EXITOSAMENTE!\n\n" +
+                                    "Tu membresía ha sido activada correctamente.\n" +
+                                    "Ya puedes disfrutar de todos los beneficios del club.",
+                                    "Pago Exitoso",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Information
+                                );
+                                this.Close();
+                            }));
+                        }
+                    }
+                    else if (intentos >= maxIntentos)
+                    {
+                        // Tiempo agotado
+                        timer.Stop();
+                        timer.Dispose();
 
-                        // ← LUEGO MOSTRAR EL MENSAJE ←
-                        MessageBox.Show(
-                            "✅ ¡PAGO EXITOSO!\n\n" +
-                            "Tu membresía ha sido activada correctamente.\n" +
-                            "Ya puedes disfrutar de todos los beneficios del club.\n\n" +
-                            "💰 Pago procesado: ARS 100,000.00\n" +
-                            "📅 Membresía activa por 1 año",
-                            "Pago Completado - Club Deportivo",
-                            MessageBoxButtons.OK,
-                            MessageBoxIcon.Information
-                        );
-
-                        timerVerificacion.Dispose();
-
-                        // Cerrar el formulario después de mostrar el mensaje
-                        this.Invoke(new Action(() => this.Close()));
+                        if (this.IsHandleCreated)
+                        {
+                            this.Invoke(new Action(() =>
+                            {
+                                MessageBox.Show(
+                                    "⏰ Tiempo de espera agotado.\n\n" +
+                                    "Si realizaste el pago, verifica el estado en tu cuenta de Stripe.\n" +
+                                    "Puedes cerrar manualmente la ventana del navegador.",
+                                    "Tiempo Agotado",
+                                    MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning
+                                );
+                            }));
+                        }
                     }
                 }
                 catch (Exception ex)
                 {
-                    // Log silencioso, no interrumpir al usuario
                     System.Diagnostics.Debug.WriteLine($"Error verificando pago: {ex.Message}");
                 }
             };
 
-            timerVerificacion.Start();
+            timer.Start();
         }
 
-        private void txtPassword_TextChanged(object sender, EventArgs e)
+        // ================================================================
+        // ✅ ELIMINAMOS TODOS LOS MÉTODOS COMPLEJOS DE CERRAR VENTANAS
+        // ================================================================
+
+        private void btnSeleccionarFoto_Click(object sender, EventArgs e)
         {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "Imágenes|*.jpg;*.jpeg;*.png;*.bmp|Todos los archivos|*.*";
+                ofd.Title = "Seleccionar Foto para Carnet";
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    try
+                    {
+                        Image img = Image.FromFile(ofd.FileName);
+                        pbFotoPreview.Image = img;
+
+                        using (MemoryStream ms = new MemoryStream())
+                        {
+                            img.Save(ms, System.Drawing.Imaging.ImageFormat.Jpeg);
+                            fotoCarnet = ms.ToArray();
+                        }
+
+                        MessageBox.Show("Foto cargada correctamente", "Éxito",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error al cargar la imagen:\n{ex.Message}",
+                            "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+            }
         }
     }
 }

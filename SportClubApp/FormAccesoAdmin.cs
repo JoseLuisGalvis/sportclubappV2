@@ -1,43 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
+﻿using SportClubApp.Data.Interfaces;
 
 namespace SportClubApp
 {
     public partial class FormAccesoAdmin : Form
     {
-        public FormAccesoAdmin()
+        private readonly IUsuarioRepository _usuarioRepository;
+
+        // ✅ NUEVO CONSTRUCTOR con Dependency Injection
+        public FormAccesoAdmin(IUsuarioRepository usuarioRepository)
         {
+            _usuarioRepository = usuarioRepository;
             InitializeComponent();
 
             // ===== Dark Mode =====
-            // Aplicar tema al abrir
             ThemeManager.ApplyTheme(this);
             AplicarTema();
-
-            // Suscribirse a cambios
             ThemeManager.ThemeChanged += (s, e) => AplicarTema();
             // ================================
 
             // Configurar PasswordChar para los campos de contraseña
             txtAccesoPassAdmin.PasswordChar = '*';
 
-            // Posicionamiento manual: centrado, pero un poco más abajo
+            // Posicionamiento manual
             this.StartPosition = FormStartPosition.Manual;
-            Rectangle screenBounds = Screen.PrimaryScreen.WorkingArea; // Área de trabajo de la pantalla principal (excluye barra de tareas)
-            int offsetVertical = 100; // Ajusta este valor para moverlo más abajo (en píxeles)
+            Rectangle screenBounds = Screen.PrimaryScreen.WorkingArea;
+            int offsetVertical = -110;
 
             int x = (screenBounds.Width - this.Width) / 2 + screenBounds.Left;
             int y = (screenBounds.Height - this.Height) / 2 + screenBounds.Top + offsetVertical;
 
             this.Location = new Point(x, y);
+        }
+
+        // ✅ CONSTRUCTOR SIN PARÁMETROS para el Diseñador (TEMPORAL)
+        public FormAccesoAdmin() : this(null)
+        {
+            // Este constructor es necesario para que el Diseñador de Forms funcione
+            // En runtime se usará el constructor con DI
         }
 
         // ===== Método para Aplicar Dark Mode =====
@@ -47,7 +46,6 @@ namespace SportClubApp
             {
                 this.BackColor = ThemeManager.DarkTheme.Background;
                 this.ForeColor = ThemeManager.DarkTheme.Text;
-                
             }
             else
             {
@@ -55,9 +53,9 @@ namespace SportClubApp
                 this.ForeColor = ThemeManager.LightTheme.Text;
             }
         }
-        // ====================================================
 
-        private void btnAcceder_Click(object sender, EventArgs e)
+        // ✅ MÉTODO ACTUALIZADO - ASINCRONO
+        private async void btnAcceder_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(txtAccesoUserAdmin.Text) || string.IsNullOrEmpty(txtAccesoPassAdmin.Text))
             {
@@ -65,28 +63,45 @@ namespace SportClubApp
                 return;
             }
 
-            if (DBHelper.ValidateUser(txtAccesoUserAdmin.Text, txtAccesoPassAdmin.Text))
+            try
             {
-                string rol = DBHelper.GetUserRol(txtAccesoUserAdmin.Text);
-                if (rol == "Administrador")
+                // ✅ NUEVA FORMA - Validación asíncrona
+                bool valido = await _usuarioRepository.ValidarCredencialesAsync(
+                    txtAccesoUserAdmin.Text,
+                    txtAccesoPassAdmin.Text
+                );
+
+                if (valido)
                 {
+                    var usuario = await _usuarioRepository.ObtenerUsuarioPorUsernameAsync(txtAccesoUserAdmin.Text);
 
-                    // Cerrar el formulario de acceso
-                    this.Close();
+                    if (usuario != null && usuario.Rol == Models.Rol.Administrador)
+                    {
+                        // Cerrar el formulario de acceso
+                        this.Close();
 
-                    // Redirige al dashboard
-                    FormDashboardAdmin dashboard = new FormDashboardAdmin();
-                    dashboard.ShowDialog();
-                    this.Hide(); // O Close() si no querés mantener el login abierto
+                        // 
+                        var dashboard = new FormDashboardAdmin();
+                        dashboard.ShowDialog();
+                        this.Hide();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Usuario no tiene rol de Administrador.", "Error",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
                 else
                 {
-                    MessageBox.Show("Usuario no tiene rol de Administrador.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Credenciales inválidas.", "Error",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
-            else
+
+            catch (Exception ex)
             {
-                MessageBox.Show("Credenciales inválidas.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"Error al validar credenciales: {ex.Message}", "Error",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -97,7 +112,7 @@ namespace SportClubApp
 
         private void txtPassword_TextChanged(object sender, EventArgs e)
         {
-
+            // Método sin cambios
         }
     }
 }
